@@ -33,6 +33,23 @@ def extract_youtube_audio_and_metadata(url: str, output_dir: str = None) -> dict
 
     print(f"[youtube_extractor] Fetching audio & metadata from: {url}")
 
+    # 0. Check for chunked audio files and reassemble them
+    incoming_dir = os.path.join(repo_root, "data", "incoming_audio")
+    if os.path.exists(incoming_dir):
+        part_files = sorted([
+            os.path.join(incoming_dir, f)
+            for f in os.listdir(incoming_dir)
+            if f.startswith(f"{video_id}_audio.mp3.part") or (f.startswith(video_id) and ".part" in f)
+        ])
+        assembled_file = os.path.join(incoming_dir, f"{video_id}_audio.mp3")
+        if part_files and not os.path.exists(assembled_file):
+            print(f"[youtube_extractor] Found {len(part_files)} chunks. Reassembling into {assembled_file}...")
+            with open(assembled_file, "wb") as out_f:
+                for p in part_files:
+                    with open(p, "rb") as in_f:
+                        out_f.write(in_f.read())
+            print(f"[youtube_extractor] Reassembled: {assembled_file} ({os.path.getsize(assembled_file)/1024/1024:.2f} MB)")
+
     # 0. Check for pre-cached/committed incoming audio (bypasses YouTube bot block completely!)
     video_id_match = re.search(r'(?:v=|\/)([0-9A-Za-z_-]{11})', url)
     video_id = video_id_match.group(1) if video_id_match else "source"
@@ -54,10 +71,24 @@ def extract_youtube_audio_and_metadata(url: str, output_dir: str = None) -> dict
                 except Exception as e:
                     print(f"[youtube_extractor] Warning loading {info_json_path}: {e}")
 
+            real_title = "Nilda Chiaraviglio Reflexión"
+            real_uploader = "Nilda Chiaraviglio"
+            try:
+                import urllib.request
+                oe_url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
+                req = urllib.request.Request(oe_url, headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=5) as r:
+                    oe = json.loads(r.read().decode())
+                    real_title = oe.get("title", real_title)
+                    real_uploader = oe.get("author_name", real_uploader)
+            except Exception as e:
+                print(f"[youtube_extractor] Oembed lookup error: {e}")
+
             return {
                 "audio_path": c_path,
                 "video_id": video_id,
-                "title": "Lo que más protege TU CEREBRO en LA VEJEZ no es la compañía | Nazareth Castellanos",
+                "title": real_title,
+                "uploader": real_uploader,
                 "description": "#nazarethcastellanos #neurociencia #bienestar #sabiduriadiaria\nEn este video descubrirás, según la neurociencia con la Dra. Nazareth Castellanos, qué es la reserva cognitiva y por qué protege tu cerebro en la vejez.",
                 "tags": ["nazareth castellanos", "neurociencia", "cerebro", "vejez", "reserva cognitiva", "sabiduria diaria", "psicologia"],
                 "uploader": "NEURO CIENCIA",
