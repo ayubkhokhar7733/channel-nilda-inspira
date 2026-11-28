@@ -340,7 +340,7 @@ def spin_motivational_metadata(
     config.reload()
     api_key = config.GROQ_API_KEY
 
-    clean_speaker = speaker_name.strip() if speaker_name else "Dr Mario"
+    clean_speaker = speaker_name.strip() if speaker_name else "Nilda Chiaraviglio"
     is_spanish = bool(re.search(r'[áéíóúñ¿¡]', f"{original_title} {original_description} {transcript}", re.IGNORECASE)) or any(w in f"{original_title.lower()} {transcript[:200].lower()}" for w in [" en ", " de ", " la ", " el ", " tu ", " que ", " como ", " para "])
 
     def _fallback_spin():
@@ -357,23 +357,10 @@ def spin_motivational_metadata(
                 f"Poderoso mensaje de {clean_speaker} sobre psicología, disciplina, mentalidad y superación personal.\n\n"
                 f"\"Si quieres cambiar tu vida, debes estar dispuesto a hacer lo que la mayoría evita.\"\n\n"
                 f"Voz / Orador: {clean_speaker}\n"
-                f"Canal: Hábitos de Acero\n\n"
-                f"Suscríbete a Hábitos de Acero para tu dosis de disciplina, mentalidad y crecimiento personal."
+                f"Canal: Nilda Inspira\n\n"
+                f"Suscríbete a Nilda Inspira para lecciones profundas de amor consciente, sanación de vínculos y respeto mutuo."
             )
-            base_tags = [
-                clean_speaker.lower(),
-                "habitos de acero",
-                "dr mario",
-                "mario alonso puig",
-                "motivacion",
-                "psicologia",
-                "desarrollo personal",
-                "disciplina",
-                "mentalidad ganadora",
-                "exito",
-                "superacion personal",
-                "liderazgo",
-            ]
+            base_tags = ["nilda chiaraviglio", "nilda inspira", "nilda chiaraviglio", "nilda inspira", "psicologia femenina", "amor propio", "relaciones de pareja", "limites sanos", "sanar heridas", "comunicacion asertiva"]
         else:
             templates = [
                 f"The Uncomfortable Truth Nobody Wants To Hear | {clean_speaker}",
@@ -387,8 +374,8 @@ def spin_motivational_metadata(
                 f"Powerful motivational speech featuring {clean_speaker} on mindset, relentless discipline, and overcoming adversity.\n\n"
                 f"\"If you want to change your life, you have to be willing to do the things everyone else avoids.\"\n\n"
                 f"Speaker: {clean_speaker}\n"
-                f"Channel: Hábitos de Acero\n\n"
-                f"Subscribe to Hábitos de Acero for daily motivation, life lessons, and personal growth."
+                f"Channel: Nilda Inspira\n\n"
+                f"Subscribe to Nilda Inspira for daily insights and personal growth."
             )
             base_tags = [
                 clean_speaker.lower(),
@@ -411,7 +398,7 @@ def spin_motivational_metadata(
 
     is_generic_speaker = clean_speaker.lower() in (
         "motivational speaker", "motivational leader", "inspirational leader",
-        "habitos de acero", "hábitos de acero", "sabiduría diaria", "sabiduria diaria", "unknown", "orador motivacional"
+        "nilda inspira", "unknown", "unknown", "orador motivacional"
     )
 
     if mock or not api_key or api_key.startswith("gsk_placeholder") or "your_" in api_key:
@@ -433,7 +420,7 @@ def spin_motivational_metadata(
         )
 
         prompt = (
-            "You are an elite YouTube SEO strategist specializing in high-performing educational & motivational self-improvement channels (like Hábitos de Acero, Sabiduría Diaria, Motiversity).\n"
+            "You are an elite YouTube SEO strategist specializing in high-performing psychological inspiration, couples therapy, and relationship channels (like Nilda Inspira).\n"
             "IMPORTANT: Detect the source language. If the source title or transcript is in Spanish, ALL output (title, description, tags) MUST BE IN SPANISH (Español). If English, output in English.\n"
             "Given the original video title, description, and transcript snippet below, generate:\n\n"
             "1. TITLE (50-78 characters max):\n"
@@ -442,14 +429,14 @@ def spin_motivational_metadata(
             "   - Clean formatting: Capitalize First Letters, no all-caps sentences, no emojis.\n"
             "   - High CTR, direct, intriguing, urgent.\n\n"
             "2. DESCRIPTION (150-250 words in the same language):\n"
-            f"   - Line 1 MUST be 3-4 top niche hashtags: #{clean_speaker.lower().replace(' ', '')} #habitosdeacero #desarrollopersonal #disciplina\n"
+            f"   - Line 1 MUST be 3-4 top niche hashtags: #{clean_speaker.lower().replace(' ', '')} #nildainspira #desarrollopersonal #reflexiones\n"
             "   - Next 2-3 sentences: An irresistible hook explaining why the viewer must watch, summarizing the core insight.\n"
             "   - Highlight a powerful quote extracted from the transcript in quotes.\n"
             f"   - Editorial credit: 'Voz / Orador: {clean_speaker}'.\n"
             "   - Add 3-4 bullet lines answering common search queries (e.g. ¿Cómo fortalecer la mente?, Técnicas para transformar tus hábitos).\n"
-            "   - End with: 'Suscríbete a Hábitos de Acero para tu dosis de disciplina, liderazgo y crecimiento personal.'\n\n"
+            "   - End with: 'Suscríbete a Nilda Inspira para lecciones profundas de amor consciente, sanación de vínculos y respeto mutuo."
             "3. TAGS (15-20 tags in the same language):\n"
-            f"   - Mix of specific tags (habitos de acero, dr mario, mario alonso puig, desarrollo personal, disciplina, {clean_speaker.lower()}) and top search queries.\n\n"
+            f"   - Mix of specific tags (nilda chiaraviglio, nilda inspira, psicologia femenina, amor propio, relaciones de pareja, {clean_speaker.lower()}) and top search queries.\n\n"
             "4. CATEGORY: 'Education'.\n\n"
             f"ORIGINAL TITLE: {original_title}\n"
             f"ORIGINAL DESCRIPTION SNIPPET: {original_description[:400]}\n"
@@ -484,9 +471,9 @@ def spin_motivational_metadata(
         desc = data.get("description", "")
         # Ensure description begins with hashtags if not already present
         if clean_speaker and not desc.strip().startswith("#"):
-            tag_line = f"#{clean_speaker.lower().replace(' ', '')} #habitosdeacero #desarrollopersonal #disciplina\n\n"
+            tag_line = f"#{clean_speaker.lower().replace(' ', '')} #nildainspira #desarrollopersonal #reflexiones\n\n"
             desc = tag_line + desc.strip()
-        tags = data.get("tags", ["habitos de acero", "dr mario", "desarrollopersonal", "disciplina"])
+        tags = data.get("tags", ["nilda chiaraviglio", "nilda inspira", "nilda chiaraviglio", "nilda inspira", "psicologia femenina", "amor propio"])
         cat = data.get("category", "Education")
 
         print(f"[metadata_generator] Spun altered title: \"{title}\" (from \"{original_title[:45]}...\")")
